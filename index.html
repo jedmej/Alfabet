@@ -1144,7 +1144,9 @@ function renderAlphabet() {
   var grid = document.createElement('div');
   grid.className = 'alpha-grid';
 
-  var letters = 'ABCDEFGHIJKLMNOPRSTUWYZ'.split('');
+  var letters = state.showDiacritics
+    ? 'ĄĆĘŁŃÓŚŹŻ'.split('')
+    : 'ABCDEFGHIJKLMNOPRSTUWYZ'.split('');
 
   letters.forEach(function(letter) {
     var btn = document.createElement('button');
@@ -1157,29 +1159,15 @@ function renderAlphabet() {
     grid.appendChild(btn);
   });
 
-  // Polish diacritics toggle button
+  // Toggle button
   var diacBtn = document.createElement('button');
   diacBtn.className = 'btn' + (state.showDiacritics ? ' btn-primary' : ' btn-secondary');
-  diacBtn.textContent = 'ĄĆĘ..';
+  diacBtn.textContent = state.showDiacritics ? 'ABC' : 'ĄĆĘ..';
   diacBtn.addEventListener('click', function() {
     state.showDiacritics = !state.showDiacritics;
     renderContent();
   });
   grid.appendChild(diacBtn);
-
-  // Polish diacritics letters (shown when toggled)
-  if (state.showDiacritics) {
-    'ĄĆĘŁŃÓŚŹŻ'.split('').forEach(function(letter) {
-      var btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = letter;
-      btn.addEventListener('click', function() {
-        state.alphaBuffer += letter.toLowerCase();
-        renderContent();
-      });
-      grid.appendChild(btn);
-    });
-  }
 
   contentEl.appendChild(grid);
 
