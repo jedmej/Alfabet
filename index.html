@@ -195,6 +195,7 @@
 
     .btn-grid.phrases-grid {
       grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
     }
 
     .btn-grid.phrases-grid .btn {
@@ -591,6 +592,13 @@
         grid-template-columns: repeat(4, 1fr);
       }
 
+      .btn-grid.phrases-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* 5 kolumn fraz tylko w landscape na tablecie */
+    @media (min-width: 601px) and (orientation: landscape) {
       .btn-grid.phrases-grid {
         grid-template-columns: repeat(5, 1fr);
       }
