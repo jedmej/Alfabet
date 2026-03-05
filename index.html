@@ -203,8 +203,14 @@
       font-size: 28px;
     }
 
+    .btn-grid.words-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
     .btn-grid.words-grid .btn {
-      min-height: 120px;
+      aspect-ratio: 1 / 1;
+      font-size: 28px;
     }
 
     .alpha-grid {
@@ -596,14 +602,16 @@
         grid-template-columns: repeat(4, 1fr);
       }
 
-      .btn-grid.phrases-grid .btn {
+      .btn-grid.phrases-grid .btn,
+      .btn-grid.words-grid .btn {
         font-size: 34px;
       }
     }
 
-    /* 5 kolumn fraz tylko w landscape na tablecie */
+    /* 5 kolumn tylko w landscape na tablecie */
     @media (min-width: 601px) and (orientation: landscape) {
-      .btn-grid.phrases-grid {
+      .btn-grid.phrases-grid,
+      .btn-grid.words-grid {
         grid-template-columns: repeat(5, 1fr);
       }
 
