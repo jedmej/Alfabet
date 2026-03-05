@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2563eb">
+  <title>Alfabet</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-size: 18px;
+      user-select: none;
+      -webkit-user-select: none;
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    /* --- Sentence Bar --- */
+    .sentence-bar {
+      min-height: 15vh;
+      background: #fff;
+      border-bottom: 2px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .sentence-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
+      align-items: center;
+      min-height: 48px;
+      padding: 4px;
+    }
+
+    .sentence-placeholder {
+      color: #999;
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    .word-tile {
+      background: #e8e0f0;
+      color: #2d1a4e;
+      border: 2px solid #c4b5d9;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+
+    .word-tile.selected {
+      background: #7c3aed;
+      color: #fff;
+      border-color: #6d28d9;
+    }
+
+    .sentence-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sentence-actions button {
+      min-height: 48px;
+      min-width: 48px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+    }
+
+    .btn-undo {
+      background: #fbbf24;
+      color: #78350f;
+    }
+
+    .btn-clear {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-speak {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    /* --- Content Area --- */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* --- Buttons --- */
+    .btn {
+      min-height: 60px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 500;
+      border: 2px solid #d1d5db;
+      background: #fff;
+      color: #1a1a1a;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 12px;
+      word-break: break-word;
+    }
+
+    .btn:active {
+      background: #e5e7eb;
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      border-color: #1d4ed8;
+    }
+
+    .btn-primary:active {
+      background: #1d4ed8;
+    }
+
+    /* --- Button Grids --- */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .alpha-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    .alpha-grid .btn {
+      min-height: 54px;
+      font-size: 20px;
+      font-weight: 600;
+      padding: 4px;
+    }
+
+    /* --- Category Pills --- */
+    .category-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      flex-shrink: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .category-pill {
+      flex-shrink: 0;
+      min-height: 44px;
+      padding: 8px 20px;
+      border-radius: 22px;
+      border: 2px solid #d1d5db;
+      background: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .category-pill.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #1d4ed8;
+    }
+
+    /* --- Alphabet Input Display --- */
+    .alpha-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .alpha-input-display {
+      flex: 1;
+      min-height: 54px;
+      background: #fff;
+      border: 2px solid #2563eb;
+      border-radius: 14px;
+      font-size: 22px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      color: #1a1a1a;
+    }
+
+    .alpha-input-display .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 24px;
+      background: #2563eb;
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .alpha-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .alpha-actions .btn {
+      min-height: 54px;
+      min-width: 54px;
+      font-size: 20px;
+    }
+
+    .alpha-suggestions {
+      margin-top: 10px;
+    }
+
+    .alpha-suggestions-label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .diacritics-toggle {
+      margin: 8px 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .diacritics-toggle .btn {
+      min-height: 44px;
+      font-size: 14px;
+      padding: 4px 14px;
+    }
+
+    /* --- Tabs --- */
+    .tab-bar {
+      height: 70px;
+      display: flex;
+      border-top: 2px solid #e0e0e0;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .tab {
+      flex: 1;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab.active {
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .tab-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .tab-label {
+      font-size: 12px;
+    }
+
+    /* --- Word Edit Overlay --- */
+    .overlay-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+
+    .overlay-backdrop.visible {
+      display: block;
+    }
+
+    .word-edit-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      z-index: 101;
+      padding: 20px 16px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      max-height: 70vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.25s ease-out;
+    }
+
+    .word-edit-sheet.visible {
+      transform: translateY(0);
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .sheet-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .sheet-close {
+      min-height: 44px;
+      min-width: 44px;
+      border: none;
+      background: #f3f4f6;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sheet-section-label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .sheet-actions .btn {
+      flex: 1;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+      border-color: #dc2626;
+    }
+
+    .btn-danger:active {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #1a1a1a;
+      border-color: #d1d5db;
+    }
+
+    /* --- Misc --- */
+    .mode-header {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .spacer {
+      height: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sentence Bar -->
+  <div class="sentence-bar" id="sentenceBar">
+    <div class="sentence-words" id="sentenceWords"></div>
+    <div class="sentence-actions" id="sentenceActions"></div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content" id="content"></div>
+
+  <!-- Word Edit Overlay -->
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+  <div class="word-edit-sheet" id="wordEditSheet"></div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-bar" id="tabBar"></div>
+
+<script>
+// =============================================
+// Data — loaded from slownik.js (placeholders)
+// =============================================
+const PHRASES = {
+  'Potrzeby': ['Chce pić', 'Chce jeść', 'Zimno mi'],
+  'Ból': ['Boli mnie głowa', 'Coś mnie boli'],
+  'Pomoc': ['Zawołaj pielegniarkę'],
+  'Rozmowa': ['Tak', 'Nie', 'Dziękuję'],
+  'Samopoczucie': ['Czuję się dobrze', 'Czuję się źle']
+};
+const DICTIONARY = ['boli', 'chcę', 'cześć', 'dobrze', 'dziękuję', 'głowa', 'jak', 'jest', 'już', 'mnie', 'nie', 'pić', 'proszę', 'się', 'tak', 'tam', 'teraz', 'tutaj', 'źle'];
+const BIGRAMS = {
+  'jak': ['tam', 'się', 'długo', 'jest'],
+  'chcę': ['pić', 'jeść', 'spać'],
+  'boli': ['mnie', 'głowa', 'brzuch']
+};
+const STARTERS = ['Ja', 'Czy', 'Jak', 'Chcę', 'Proszę', 'Nie', 'Gdzie', 'Kiedy', 'Co'];
+
+const POLISH_DIACRITICS = ['Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'];
+const ALPHABET = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
+
+// =============================================
+// App State
+// =============================================
+const state = {
+  sentence: [],
+  mode: 'phrases',
+  selectedWordIdx: null,
+  alphaBuffer: '',
+  activeCategory: 0,
+  editingWordIdx: null,
+  showDiacritics: false
+};
+
+// =============================================
+// DOM References
+// =============================================
+const sentenceWordsEl = document.getElementById('sentenceWords');
+const sentenceActionsEl = document.getElementById('sentenceActions');
+const contentEl = document.getElementById('content');
+const overlayBackdrop = document.getElementById('overlayBackdrop');
+const wordEditSheet = document.getElementById('wordEditSheet');
+const tabBarEl = document.getElementById('tabBar');
+
+// =============================================
+// Render: Sentence Bar
+// =============================================
+function renderSentence() {
+  sentenceWordsEl.textContent = '';
+  sentenceActionsEl.textContent = '';
+
+  if (state.sentence.length === 0) {
+    const placeholder = document.createElement('span');
+    placeholder.className = 'sentence-placeholder';
+    placeholder.textContent = 'Dotknij aby zbudować zdanie...';
+    sentenceWordsEl.appendChild(placeholder);
+  } else {
+    state.sentence.forEach(function(word, idx) {
+      const tile = document.createElement('span');
+      tile.className = 'word-tile';
+      if (state.selectedWordIdx === idx) {
+        tile.classList.add('selected');
+      }
+      tile.textContent = word;
+      tile.addEventListener('click', function() {
+        openWordEdit(idx);
+      });
+      sentenceWordsEl.appendChild(tile);
+    });
+  }
+
+  // Undo button
+  if (state.sentence.length > 0) {
+    const undoBtn = document.createElement('button');
+    undoBtn.className = 'btn-undo';
+    undoBtn.textContent = 'Cofnij';
+    undoBtn.addEventListener('click', function() {
+      state.sentence.pop();
+      state.selectedWordIdx = null;
+      renderSentence();
+      renderContent();
+    });
+    sentenceActionsEl.appendChild(undoBtn);
+  }
+
+  // Clear button
+  if (state.sentence.length > 0) {
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'btn-clear';
+    clearBtn.textContent = 'Wyczyść';
+    clearBtn.addEventListener('click', function() {
+      if (state.sentence.length > 1) {
+        if (!confirm('Wyczyścić całe zdanie?')) return;
+      }
+      state.sentence = [];
+      state.selectedWordIdx = null;
+      renderSentence();
+      renderContent();
+    });
+    sentenceActionsEl.appendChild(clearBtn);
+  }
+}
+
+// =============================================
+// Word Edit Overlay
+// =============================================
+function openWordEdit(idx) {
+  state.selectedWordIdx = idx;
+  renderSentence();
+
+  const word = state.sentence[idx];
+  wordEditSheet.textContent = '';
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'sheet-header';
+  const title = document.createElement('span');
+  title.className = 'sheet-title';
+  title.textContent = word;
+  header.appendChild(title);
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'sheet-close';
+  closeBtn.textContent = '\u2715';
+  closeBtn.addEventListener('click', closeWordEdit);
+  header.appendChild(closeBtn);
+  wordEditSheet.appendChild(header);
+
+  // Replacement suggestions from BIGRAMS
+  const lowerWord = word.toLowerCase();
+  const suggestions = BIGRAMS[lowerWord] || [];
+  if (suggestions.length > 0) {
+    const label = document.createElement('div');
+    label.className = 'sheet-section-label';
+    label.textContent = 'Zamień na:';
+    wordEditSheet.appendChild(label);
+
+    const grid = document.createElement('div');
+    grid.className = 'btn-grid';
+    suggestions.forEach(function(s) {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = s;
+      btn.addEventListener('click', function() {
+        state.sentence[idx] = s;
+        closeWordEdit();
+      });
+      grid.appendChild(btn);
+    });
+    wordEditSheet.appendChild(grid);
+  }
+
+  // Actions row
+  const actions = document.createElement('div');
+  actions.className = 'sheet-actions';
+
+  const typeBtn = document.createElement('button');
+  typeBtn.className = 'btn btn-primary';
+  typeBtn.textContent = 'Wpisz inne';
+  typeBtn.addEventListener('click', function() {
+    state.editingWordIdx = idx;
+    state.alphaBuffer = '';
+    closeWordEdit();
+    switchMode('alphabet');
+  });
+  actions.appendChild(typeBtn);
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-danger';
+  deleteBtn.textContent = 'Usuń';
+  deleteBtn.addEventListener('click', function() {
+    state.sentence.splice(idx, 1);
+    closeWordEdit();
+  });
+  actions.appendChild(deleteBtn);
+
+  wordEditSheet.appendChild(actions);
+
+  // Show overlay
+  overlayBackdrop.classList.add('visible');
+  wordEditSheet.classList.add('visible');
+
+  overlayBackdrop.onclick = closeWordEdit;
+}
+
+function closeWordEdit() {
+  state.selectedWordIdx = null;
+  overlayBackdrop.classList.remove('visible');
+  wordEditSheet.classList.remove('visible');
+  overlayBackdrop.onclick = null;
+  renderSentence();
+  renderContent();
+}
+
+// =============================================
+// Add Word
+// =============================================
+function addWord(word) {
+  if (state.editingWordIdx !== null) {
+    state.sentence[state.editingWordIdx] = word;
+    state.editingWordIdx = null;
+  } else {
+    state.sentence.push(word);
+  }
+  state.alphaBuffer = '';
+  renderSentence();
+  // After picking a word in alphabet mode, switch back to words mode
+  if (state.mode === 'alphabet') {
+    switchMode('words');
+  } else {
+    renderContent();
+  }
+}
+
+// =============================================
+// Mode Switching
+// =============================================
+function switchMode(mode) {
+  state.mode = mode;
+  if (mode !== 'alphabet') {
+    state.alphaBuffer = '';
+    state.showDiacritics = false;
+  }
+  renderTabs();
+  renderContent();
+}
+
+// =============================================
+// Render: Tabs
+// =============================================
+function renderTabs() {
+  tabBarEl.textContent = '';
+
+  var tabs = [
+    { mode: 'phrases', icon: '\uD83D\uDCAC', label: 'Frazy' },
+    { mode: 'words', icon: '\uD83D\uDD24', label: 'Słowa' },
+    { mode: 'alphabet', icon: '\uD83D\uDD20', label: 'Litery' }
+  ];
+
+  tabs.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'tab';
+    if (state.mode === t.mode) btn.classList.add('active');
+
+    var icon = document.createElement('span');
+    icon.className = 'tab-icon';
+    icon.textContent = t.icon;
+    btn.appendChild(icon);
+
+    var label = document.createElement('span');
+    label.className = 'tab-label';
+    label.textContent = t.label;
+    btn.appendChild(label);
+
+    btn.addEventListener('click', function() {
+      switchMode(t.mode);
+    });
+
+    tabBarEl.appendChild(btn);
+  });
+}
+
+// =============================================
+// Render: Content
+// =============================================
+function renderContent() {
+  contentEl.textContent = '';
+  contentEl.scrollTop = 0;
+
+  switch (state.mode) {
+    case 'phrases':
+      renderPhrases();
+      break;
+    case 'words':
+      renderWords();
+      break;
+    case 'alphabet':
+      renderAlphabet();
+      break;
+  }
+}
+
+// =============================================
+// Render: Phrases Mode
+// =============================================
+function renderPhrases() {
+  var categories = Object.keys(PHRASES);
+
+  // Category pills
+  var catBar = document.createElement('div');
+  catBar.className = 'category-bar';
+  categories.forEach(function(cat, i) {
+    var pill = document.createElement('button');
+    pill.className = 'category-pill';
+    if (state.activeCategory === i) pill.classList.add('active');
+    pill.textContent = cat;
+    pill.addEventListener('click', function() {
+      state.activeCategory = i;
+      renderContent();
+    });
+    catBar.appendChild(pill);
+  });
+  contentEl.appendChild(catBar);
+
+  // Phrase buttons
+  var activeCat = categories[state.activeCategory] || categories[0];
+  var phrases = PHRASES[activeCat] || [];
+
+  var grid = document.createElement('div');
+  grid.className = 'btn-grid';
+  phrases.forEach(function(phrase) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-primary';
+    btn.textContent = phrase;
+    btn.addEventListener('click', function() {
+      state.sentence = phrase.split(' ');
+      renderSentence();
+      renderContent();
+    });
+    grid.appendChild(btn);
+  });
+  contentEl.appendChild(grid);
+}
+
+// =============================================
+// Render: Words Mode
+// =============================================
+function renderWords() {
+  var lastWord = state.sentence.length > 0
+    ? state.sentence[state.sentence.length - 1].toLowerCase()
+    : null;
+  var suggestions = lastWord && BIGRAMS[lastWord] ? BIGRAMS[lastWord] : null;
+
+  if (suggestions) {
+    var label = document.createElement('div');
+    label.className = 'mode-header';
+    label.textContent = 'Sugerowane po "' + state.sentence[state.sentence.length - 1] + '":';
+    contentEl.appendChild(label);
+
+    var grid = document.createElement('div');
+    grid.className = 'btn-grid';
+    suggestions.forEach(function(w) {
+      var btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = w;
+      btn.addEventListener('click', function() {
+        addWord(w);
+      });
+      grid.appendChild(btn);
+    });
+    contentEl.appendChild(grid);
+
+    var spacer = document.createElement('div');
+    spacer.className = 'spacer';
+    contentEl.appendChild(spacer);
+
+    var allLabel = document.createElement('div');
+    allLabel.className = 'mode-header';
+    allLabel.textContent = 'Wszystkie:';
+    contentEl.appendChild(allLabel);
+  } else {
+    var starterLabel = document.createElement('div');
+    starterLabel.className = 'mode-header';
+    starterLabel.textContent = 'Zacznij od:';
+    contentEl.appendChild(starterLabel);
+  }
+
+  // Show starters or full list
+  var words = suggestions ? STARTERS : STARTERS;
+  var starterGrid = document.createElement('div');
+  starterGrid.className = 'btn-grid';
+  words.forEach(function(w) {
+    var btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = w;
+    btn.addEventListener('click', function() {
+      addWord(w);
+    });
+    starterGrid.appendChild(btn);
+  });
+  contentEl.appendChild(starterGrid);
+
+  // "Type with letters" button
+  var spacer2 = document.createElement('div');
+  spacer2.className = 'spacer';
+  contentEl.appendChild(spacer2);
+
+  var typeBtn = document.createElement('button');
+  typeBtn.className = 'btn btn-secondary';
+  typeBtn.style.width = '100%';
+  typeBtn.textContent = 'Wpisz literkami';
+  typeBtn.addEventListener('click', function() {
+    switchMode('alphabet');
+  });
+  contentEl.appendChild(typeBtn);
+}
+
+// =============================================
+// Render: Alphabet Mode
+// =============================================
+function renderAlphabet() {
+  // Input display row
+  var inputRow = document.createElement('div');
+  inputRow.className = 'alpha-input-row';
+
+  var display = document.createElement('div');
+  display.className = 'alpha-input-display';
+  var textSpan = document.createElement('span');
+  textSpan.textContent = state.alphaBuffer;
+  display.appendChild(textSpan);
+  var cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  display.appendChild(cursor);
+  inputRow.appendChild(display);
+
+  var actionsDiv = document.createElement('div');
+  actionsDiv.className = 'alpha-actions';
+
+  // Backspace
+  var bksp = document.createElement('button');
+  bksp.className = 'btn';
+  bksp.textContent = '\u232B';
+  bksp.addEventListener('click', function() {
+    if (state.alphaBuffer.length > 0) {
+      state.alphaBuffer = state.alphaBuffer.slice(0, -1);
+      renderContent();
+    }
+  });
+  actionsDiv.appendChild(bksp);
+
+  // Add word / space
+  var addBtn = document.createElement('button');
+  addBtn.className = 'btn btn-primary';
+  addBtn.textContent = 'Dodaj';
+  addBtn.addEventListener('click', function() {
+    if (state.alphaBuffer.trim().length > 0) {
+      addWord(state.alphaBuffer.trim().toLowerCase());
+    }
+  });
+  actionsDiv.appendChild(addBtn);
+
+  inputRow.appendChild(actionsDiv);
+  contentEl.appendChild(inputRow);
+
+  // Diacritics toggle
+  var diacToggle = document.createElement('div');
+  diacToggle.className = 'diacritics-toggle';
+  var toggleBtn = document.createElement('button');
+  toggleBtn.className = 'btn' + (state.showDiacritics ? ' btn-primary' : ' btn-secondary');
+  toggleBtn.textContent = state.showDiacritics ? 'ABC' : 'ĄĆĘŁŃ';
+  toggleBtn.addEventListener('click', function() {
+    state.showDiacritics = !state.showDiacritics;
+    renderContent();
+  });
+  diacToggle.appendChild(toggleBtn);
+  contentEl.appendChild(diacToggle);
+
+  // Letter grid
+  var grid = document.createElement('div');
+  grid.className = 'alpha-grid';
+
+  var letters;
+  if (state.showDiacritics) {
+    letters = POLISH_DIACRITICS;
+  } else {
+    letters = 'ABCDEFGHIJKLMNOPRSTUWYZ'.split('');
+  }
+
+  letters.forEach(function(letter) {
+    var btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = letter;
+    btn.addEventListener('click', function() {
+      state.alphaBuffer += letter.toLowerCase();
+      renderContent();
+    });
+    grid.appendChild(btn);
+  });
+  contentEl.appendChild(grid);
+
+  // Filtered dictionary suggestions
+  if (state.alphaBuffer.length > 0) {
+    var filtered = DICTIONARY.filter(function(w) {
+      return w.startsWith(state.alphaBuffer.toLowerCase());
+    });
+
+    if (filtered.length > 0) {
+      var spacer = document.createElement('div');
+      spacer.className = 'spacer';
+      contentEl.appendChild(spacer);
+
+      var sugLabel = document.createElement('div');
+      sugLabel.className = 'alpha-suggestions-label';
+      sugLabel.textContent = 'Pasujące słowa:';
+      contentEl.appendChild(sugLabel);
+
+      var sugGrid = document.createElement('div');
+      sugGrid.className = 'btn-grid';
+      filtered.forEach(function(w) {
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-primary';
+        btn.textContent = w;
+        btn.addEventListener('click', function() {
+          addWord(w);
+        });
+        sugGrid.appendChild(btn);
+      });
+      contentEl.appendChild(sugGrid);
+    }
+  }
+}
+
+// =============================================
+// Init
+// =============================================
+function init() {
+  renderTabs();
+  renderSentence();
+  renderContent();
+}
+
+init();
+
+// =============================================
+// Service Worker Registration
+// =============================================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function() {});
+}
+</script>
+</body>
+</html>
