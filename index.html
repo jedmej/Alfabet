@@ -427,6 +427,85 @@
     .spacer {
       height: 10px;
     }
+
+    .btn-settings {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    /* --- Settings Panel --- */
+    .settings-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      z-index: 101;
+      padding: 20px 16px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      max-height: 70vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.25s ease-out;
+    }
+
+    .settings-sheet.visible {
+      transform: translateY(0);
+    }
+
+    .settings-field {
+      margin-bottom: 16px;
+    }
+
+    .settings-label {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .settings-input {
+      width: 100%;
+      min-height: 48px;
+      border: 2px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 18px;
+      padding: 8px 14px;
+      color: #1a1a1a;
+      background: #fff;
+    }
+
+    .settings-input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .settings-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .settings-toggle input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .settings-toggle label {
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .ai-loading {
+      font-size: 14px;
+      color: #2563eb;
+      font-weight: 600;
+      padding: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -443,6 +522,9 @@
   <!-- Word Edit Overlay -->
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
   <div class="word-edit-sheet" id="wordEditSheet"></div>
+
+  <!-- Settings Panel -->
+  <div class="settings-sheet" id="settingsSheet"></div>
 
   <!-- Tab Navigation -->
   <div class="tab-bar" id="tabBar"></div>
@@ -536,6 +618,13 @@ function renderSentence() {
     });
     sentenceActionsEl.appendChild(clearBtn);
   }
+
+  // Settings button (always visible)
+  var settingsBtn = document.createElement('button');
+  settingsBtn.className = 'btn-settings';
+  settingsBtn.textContent = '\u2699';
+  settingsBtn.addEventListener('click', openSettings);
+  sentenceActionsEl.appendChild(settingsBtn);
 }
 
 // =============================================
@@ -773,8 +862,20 @@ function renderWords() {
     label.textContent = 'Sugerowane po "' + state.sentence[state.sentence.length - 1] + '":';
     contentEl.appendChild(label);
 
+    // AI loading indicator
+    var aiEnabled = localStorage.getItem('alfabet_ai_enabled') === 'true';
+    var apiKey = localStorage.getItem('alfabet_api_key');
+    var aiLoading = null;
+    if (aiEnabled && apiKey) {
+      aiLoading = document.createElement('div');
+      aiLoading.className = 'ai-loading';
+      aiLoading.textContent = 'AI...';
+      contentEl.appendChild(aiLoading);
+    }
+
     var grid = document.createElement('div');
     grid.className = 'btn-grid';
+    grid.id = 'suggestionsGrid';
     suggestions.forEach(function(w) {
       var btn = document.createElement('button');
       btn.className = 'btn btn-primary';
@@ -786,6 +887,39 @@ function renderWords() {
     });
     contentEl.appendChild(grid);
 
+    // AI async enhancement
+    if (aiEnabled && apiKey && state.sentence.length > 0) {
+      aiRequestId++;
+      var currentRequestId = aiRequestId;
+      getAIPredictions(state.sentence).then(function(aiWords) {
+        if (currentRequestId !== aiRequestId) return; // stale request
+        if (aiLoading && aiLoading.parentNode) {
+          aiLoading.parentNode.removeChild(aiLoading);
+        }
+        if (!aiWords || aiWords.length === 0) return;
+        var existingGrid = document.getElementById('suggestionsGrid');
+        if (!existingGrid) return;
+        // Deduplicate: collect existing words (lowercase)
+        var existingWords = {};
+        suggestions.forEach(function(w) { existingWords[w.toLowerCase()] = true; });
+        // Prepend AI words that aren't already present
+        var addedCount = 0;
+        aiWords.forEach(function(w) {
+          if (!existingWords[w.toLowerCase()]) {
+            existingWords[w.toLowerCase()] = true;
+            var btn = document.createElement('button');
+            btn.className = 'btn btn-primary';
+            btn.textContent = w;
+            btn.addEventListener('click', function() {
+              addWord(w);
+            });
+            existingGrid.insertBefore(btn, existingGrid.children[addedCount]);
+            addedCount++;
+          }
+        });
+      });
+    }
+
     var spacer = document.createElement('div');
     spacer.className = 'spacer';
     contentEl.appendChild(spacer);
@@ -795,6 +929,52 @@ function renderWords() {
     allLabel.textContent = 'Wszystkie:';
     contentEl.appendChild(allLabel);
   } else {
+    // AI loading indicator for starters
+    var aiEnabledStarter = localStorage.getItem('alfabet_ai_enabled') === 'true';
+    var apiKeyStarter = localStorage.getItem('alfabet_api_key');
+    var aiLoadingStarter = null;
+    if (aiEnabledStarter && apiKeyStarter && state.sentence.length > 0) {
+      aiLoadingStarter = document.createElement('div');
+      aiLoadingStarter.className = 'ai-loading';
+      aiLoadingStarter.textContent = 'AI...';
+      contentEl.appendChild(aiLoadingStarter);
+
+      // Even without bigram suggestions, try AI if there's a sentence
+      aiRequestId++;
+      var currentRequestIdStarter = aiRequestId;
+      getAIPredictions(state.sentence).then(function(aiWords) {
+        if (currentRequestIdStarter !== aiRequestId) return;
+        if (aiLoadingStarter && aiLoadingStarter.parentNode) {
+          aiLoadingStarter.parentNode.removeChild(aiLoadingStarter);
+        }
+        if (!aiWords || aiWords.length === 0) return;
+        // Insert AI suggestions section before "Zacznij od:"
+        var aiLabel = document.createElement('div');
+        aiLabel.className = 'mode-header';
+        aiLabel.textContent = 'Sugerowane przez AI:';
+        var aiGrid = document.createElement('div');
+        aiGrid.className = 'btn-grid';
+        aiWords.forEach(function(w) {
+          var btn = document.createElement('button');
+          btn.className = 'btn btn-primary';
+          btn.textContent = w;
+          btn.addEventListener('click', function() {
+            addWord(w);
+          });
+          aiGrid.appendChild(btn);
+        });
+        var aiSpacer = document.createElement('div');
+        aiSpacer.className = 'spacer';
+        // Insert before the starter label
+        var starterEl = contentEl.querySelector('.mode-header');
+        if (starterEl) {
+          contentEl.insertBefore(aiLabel, starterEl);
+          contentEl.insertBefore(aiGrid, starterEl);
+          contentEl.insertBefore(aiSpacer, starterEl);
+        }
+      });
+    }
+
     var starterLabel = document.createElement('div');
     starterLabel.className = 'mode-header';
     starterLabel.textContent = 'Zacznij od:';
@@ -943,6 +1123,134 @@ function renderAlphabet() {
       });
       contentEl.appendChild(sugGrid);
     }
+  }
+}
+
+// =============================================
+// Settings Panel
+// =============================================
+var settingsSheet = document.getElementById('settingsSheet');
+
+function openSettings() {
+  settingsSheet.textContent = '';
+
+  // Header
+  var header = document.createElement('div');
+  header.className = 'sheet-header';
+  var title = document.createElement('span');
+  title.className = 'sheet-title';
+  title.textContent = 'Ustawienia';
+  header.appendChild(title);
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'sheet-close';
+  closeBtn.textContent = '\u2715';
+  closeBtn.addEventListener('click', closeSettings);
+  header.appendChild(closeBtn);
+  settingsSheet.appendChild(header);
+
+  // API Key field
+  var apiField = document.createElement('div');
+  apiField.className = 'settings-field';
+  var apiLabel = document.createElement('label');
+  apiLabel.className = 'settings-label';
+  apiLabel.textContent = 'Klucz API (Anthropic):';
+  apiLabel.setAttribute('for', 'settingsApiKey');
+  apiField.appendChild(apiLabel);
+  var apiInput = document.createElement('input');
+  apiInput.className = 'settings-input';
+  apiInput.type = 'password';
+  apiInput.id = 'settingsApiKey';
+  apiInput.placeholder = 'sk-ant-...';
+  apiInput.value = localStorage.getItem('alfabet_api_key') || '';
+  apiInput.addEventListener('input', function() {
+    localStorage.setItem('alfabet_api_key', apiInput.value);
+  });
+  apiField.appendChild(apiInput);
+  settingsSheet.appendChild(apiField);
+
+  // AI toggle
+  var toggleField = document.createElement('div');
+  toggleField.className = 'settings-field settings-toggle';
+  var checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = 'settingsAiToggle';
+  checkbox.checked = localStorage.getItem('alfabet_ai_enabled') === 'true';
+  checkbox.addEventListener('change', function() {
+    localStorage.setItem('alfabet_ai_enabled', checkbox.checked ? 'true' : 'false');
+  });
+  toggleField.appendChild(checkbox);
+  var toggleLabel = document.createElement('label');
+  toggleLabel.textContent = 'Używaj AI';
+  toggleLabel.setAttribute('for', 'settingsAiToggle');
+  toggleField.appendChild(toggleLabel);
+  settingsSheet.appendChild(toggleField);
+
+  // Close button
+  var closeAction = document.createElement('button');
+  closeAction.className = 'btn btn-primary';
+  closeAction.style.width = '100%';
+  closeAction.textContent = 'Zamknij';
+  closeAction.addEventListener('click', closeSettings);
+  settingsSheet.appendChild(closeAction);
+
+  // Show
+  overlayBackdrop.classList.add('visible');
+  settingsSheet.classList.add('visible');
+  overlayBackdrop.onclick = closeSettings;
+}
+
+function closeSettings() {
+  overlayBackdrop.classList.remove('visible');
+  settingsSheet.classList.remove('visible');
+  overlayBackdrop.onclick = null;
+}
+
+// =============================================
+// AI Prediction
+// =============================================
+var aiRequestId = 0;
+
+async function getAIPredictions(sentenceWords) {
+  var apiKey = localStorage.getItem('alfabet_api_key');
+  var aiEnabled = localStorage.getItem('alfabet_ai_enabled') === 'true';
+
+  if (!aiEnabled || !apiKey) return null;
+
+  var sentence = sentenceWords.join(' ');
+
+  var controller = new AbortController();
+  var timeout = setTimeout(function() { controller.abort(); }, 2000);
+
+  try {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
+        messages: [{
+          role: 'user',
+          content: 'Jeste\u015b asystentem osoby w szpitalu, kt\u00f3ra nie mo\u017ce m\u00f3wi\u0107 i komunikuje si\u0119 wybieraj\u0105c s\u0142owa. Osoba buduje zdanie po polsku i wybra\u0142a ju\u017c: "' + sentence + '"\n\nPodaj 9 najbardziej prawdopodobnych nast\u0119pnych s\u0142\u00f3w po polsku. Odpowiedz TYLKO list\u0105 s\u0142\u00f3w oddzielonych przecinkami, bez \u017cadnych dodatkowych wyja\u015bnie\u0144. S\u0142owa powinny naturalnie kontynuowa\u0107 zdanie.'
+        }]
+      })
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) return null;
+
+    var data = await response.json();
+    var text = data.content[0].text;
+    return text.split(',').map(function(w) { return w.trim(); }).filter(function(w) { return w.length > 0; }).slice(0, 9);
+  } catch (e) {
+    clearTimeout(timeout);
+    return null;
   }
 }
 
