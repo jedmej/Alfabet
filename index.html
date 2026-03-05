@@ -1316,7 +1316,7 @@ async function getAIPredictions(sentenceWords) {
   var prompt = 'Jesteś asystentem osoby w szpitalu, która nie może mówić i komunikuje się wybierając słowa. Osoba buduje zdanie po polsku i wybrała już: "' + sentence + '"\n\nPodaj 9 najbardziej prawdopodobnych następnych słów po polsku. Odpowiedz TYLKO listą słów oddzielonych przecinkami, bez żadnych dodatkowych wyjaśnień. Słowa powinny naturalnie kontynuować zdanie.';
 
   try {
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(apiKey);
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=' + encodeURIComponent(apiKey);
     var response = await fetch(url, {
       method: 'POST',
       headers: {
