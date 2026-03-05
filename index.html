@@ -31,6 +31,17 @@
       height: 100%;
     }
 
+    /* --- Sticky Bar (mode-specific controls) --- */
+    .sticky-bar {
+      flex-shrink: 0;
+      background: #f5f5f5;
+      padding: 8px 10px;
+    }
+
+    .sticky-bar:empty {
+      display: none;
+    }
+
     /* --- Sentence Bar --- */
     .sentence-bar {
       background: #fff;
@@ -642,6 +653,9 @@
   <!-- Content Area -->
   <div class="content" id="content"></div>
 
+  <!-- Mode-specific sticky bar -->
+  <div class="sticky-bar" id="stickyBar"></div>
+
   <!-- Word Edit Overlay -->
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
   <div class="word-edit-sheet" id="wordEditSheet"></div>
@@ -919,11 +933,14 @@ function renderTabs() {
 // =============================================
 // Render: Content
 // =============================================
+var stickyBarEl = document.getElementById('stickyBar');
+
 function renderContent() {
   contentEl.textContent = '';
   contentEl.scrollTop = 0;
   contentEl.style.display = '';
   contentEl.style.flexDirection = '';
+  stickyBarEl.textContent = '';
 
   switch (state.mode) {
     case 'phrases':
@@ -958,7 +975,7 @@ function renderPhrases() {
     });
     catBar.appendChild(pill);
   });
-  contentEl.appendChild(catBar);
+  stickyBarEl.appendChild(catBar);
 
   // Phrase buttons
   var activeCat = categories[state.activeCategory] || categories[0];
@@ -984,16 +1001,15 @@ function renderPhrases() {
 // Render: Words Mode
 // =============================================
 function renderWords() {
-  // "Type with letters" button at the top
+  // "Type with letters" button in sticky bar
   var typeBtn = document.createElement('button');
   typeBtn.className = 'btn btn-secondary';
   typeBtn.style.width = '100%';
-  typeBtn.style.marginBottom = '10px';
   typeBtn.textContent = 'Wpisz literkami';
   typeBtn.addEventListener('click', function() {
     switchMode('alphabet');
   });
-  contentEl.appendChild(typeBtn);
+  stickyBarEl.appendChild(typeBtn);
 
   var lastWord = state.sentence.length > 0
     ? state.sentence[state.sentence.length - 1].toLowerCase()
@@ -1192,7 +1208,7 @@ function renderAlphabet() {
   });
   actionsGrid.appendChild(addBtn);
 
-  contentEl.appendChild(actionsGrid);
+  stickyBarEl.appendChild(actionsGrid);
 
   // Check if suggestions will be shown
   var hasSuggestions = state.alphaBuffer.length > 0 &&
