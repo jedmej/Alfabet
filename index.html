@@ -33,14 +33,13 @@
 
     /* --- Sentence Bar --- */
     .sentence-bar {
-      min-height: 15vh;
       background: #fff;
       border-bottom: 2px solid #e0e0e0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       padding: 8px;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
@@ -89,6 +88,7 @@
       display: flex;
       gap: 6px;
       flex-shrink: 0;
+      justify-content: flex-end;
     }
 
     .sentence-actions button {
