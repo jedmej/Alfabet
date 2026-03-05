@@ -1184,9 +1184,23 @@ function renderAlphabet() {
   inputRow.appendChild(actionsDiv);
   contentEl.appendChild(inputRow);
 
+  // Check if suggestions will be shown
+  var hasSuggestions = state.alphaBuffer.length > 0 &&
+    DICTIONARY.some(function(w) { return w.startsWith(state.alphaBuffer.toLowerCase()); });
+
+  // If no suggestions, fill the container
+  if (!hasSuggestions) {
+    contentEl.style.display = 'flex';
+    contentEl.style.flexDirection = 'column';
+  }
+
   // Letter grid
   var grid = document.createElement('div');
   grid.className = 'alpha-grid';
+  if (!hasSuggestions) {
+    grid.style.flex = '1';
+    grid.style.gridAutoRows = '1fr';
+  }
 
   var letters = state.showDiacritics
     ? 'ĄĆĘŁŃÓŚŹŻ'.split('')
