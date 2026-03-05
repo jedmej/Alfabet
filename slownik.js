@@ -6,67 +6,91 @@
 // --- Quick Phrases (hospital scenarios) ---
 const PHRASES = {
   'Potrzeby': [
-    'Chcę pić', 'Chcę wodę', 'Chcę herbatę', 'Chcę sok',
-    'Chcę jeść', 'Jestem głodna', 'Jestem spragniona', 'Chcę spać',
+    // Najczęstsze przy zapaleniu trzustki (OJOM, nie je, kroplówka)
     'Zimno mi', 'Gorąco mi', 'Chcę koc', 'Zdejmij koc',
-    'Chcę do toalety', 'Chcę się umyć', 'Chcę się przebrać',
-    'Chcę dodatkową poduszkę', 'Proszę poprawić poduszkę',
-    'Chcę okulary', 'Chcę telefon', 'Podaj mi chusteczki',
-    'Otwórz okno', 'Zamknij okno', 'Zapal światło', 'Zgaś światło',
     'Chcę się położyć', 'Chcę usiąść', 'Pomóż mi wstać',
-    'Chcę pilota do telewizora', 'Włącz telewizor', 'Wyłącz telewizor'
+    'Pomóż mi się obrócić', 'Proszę poprawić poduszkę', 'Chcę dodatkową poduszkę',
+    'Chcę do toalety', 'Potrzebuję kaczki', 'Chcę się umyć', 'Chcę się przebrać',
+    'Podaj mi chusteczki', 'Chcę telefon', 'Chcę okulary',
+    'Zapal światło', 'Zgaś światło', 'Otwórz okno', 'Zamknij okno',
+    'Chcę spać', 'Chcę ciszę', 'Włącz telewizor', 'Wyłącz telewizor',
+    'Chcę pilota do telewizora',
+    // Jedzenie/picie - na razie OJOM, ale może pytać
+    'Kiedy będę mogła jeść?', 'Kiedy będę mogła pić?',
+    'Chcę pić', 'Chcę zwilżyć usta'
   ],
   'Ból': [
+    // Najbardziej prawdopodobne przy zapaleniu trzustki
     'Boli mnie brzuch', 'Boli mnie bardzo mocno', 'Boli mnie trochę',
-    'Boli coraz bardziej', 'Boli mniej niż wczoraj', 'Ból nie ustępuje',
-    'Boli mnie głowa', 'Boli mnie plecy', 'Boli mnie klatka piersiowa',
-    'Boli mnie ręka', 'Boli mnie noga', 'Boli mnie szyja',
-    'Boli mnie bark', 'Boli mnie kolano', 'Boli mnie stopa',
-    'Ból jest ostry', 'Ból jest tępy', 'Ból promieniuje',
-    'Boli przy oddychaniu', 'Boli przy ruszaniu', 'Boli cały czas',
-    'Boli od rana', 'Boli w nocy', 'Boli po jedzeniu',
+    'Boli coraz bardziej', 'Boli mniej niż wczoraj', 'Jest lepiej z bólem',
+    'Ból nie ustępuje', 'Lek pomógł', 'Lek nie pomaga',
+    'Potrzebuję leku na ból', 'Boli cały czas', 'Boli od rana',
+    'Boli w nocy', 'Ból jest ostry', 'Ból jest tępy', 'Ból promieniuje',
+    // Oddychanie - częste przy zapaleniu trzustki
+    'Boli przy oddychaniu', 'Trudno mi oddychać', 'Boli przy ruszaniu',
+    // Powiązane z kroplówką/leżeniem
+    'Boli mnie plecy', 'Boli mnie klatka piersiowa', 'Boli mnie głowa',
+    'Boli mnie ręka od kroplówki', 'Boli mnie miejsce po zastrzyku',
+    // Inne kończyny - od leżenia
+    'Boli mnie noga', 'Boli mnie szyja', 'Boli mnie bark',
     'Coś mnie boli', 'Boli inaczej niż wcześniej',
-    'Potrzebuję leku na ból', 'Lek nie pomaga', 'Lek pomógł',
-    'Jest lepiej z bólem'
+    'Ból się zmienił'
   ],
   'Pomoc': [
+    // Najpilniejsze
     'Zawołaj pielęgniarkę', 'Zawołaj lekarza', 'Potrzebuję pomocy',
-    'Proszę podnieść łóżko', 'Proszę położyć łóżko', 'Proszę opuścić łóżko',
-    'Pomóż mi się obrócić', 'Pomóż mi wstać', 'Pomóż mi usiąść',
-    'Podaj mi wodę', 'Podaj mi telefon', 'Potrzebuję kaczki',
-    'Kiedy będzie lekarz?', 'Kiedy będzie obiad?', 'Kiedy badanie?',
-    'Kiedy mogę iść do domu?', 'Kiedy następna tabletka?',
+    'Proszę podnieść łóżko', 'Proszę położyć łóżko',
     'Kiedy następna kroplówka?', 'Kiedy następny zastrzyk?',
-    'Czy mogę dostać tabletkę?', 'Czy mogę dostać coś na ból?',
-    'Czy mogę już jeść?', 'Czy mogę już pić?',
+    'Kiedy następna tabletka?', 'Czy mogę dostać coś na ból?',
+    'Czy mogę dostać tabletkę?',
+    // Pytania o leczenie
     'Co mówił lekarz?', 'Jakie są wyniki?', 'Co dalej z leczeniem?',
-    'Jak długo jeszcze będę tu leżeć?', 'Chcę porozmawiać z lekarzem',
-    'Proszę o cierpliwość', 'Proszę mówić wolniej'
+    'Chcę porozmawiać z lekarzem', 'Kiedy badanie?',
+    'Jak długo jeszcze będę tu leżeć?', 'Kiedy mogę iść do domu?',
+    // Żywienie - kluczowe przy trzustce
+    'Czy mogę już jeść?', 'Czy mogę już pić?',
+    'Kiedy zdejmą kroplówkę?', 'Jak wyglądają wyniki trzustki?',
+    // Komfort
+    'Pomóż mi wstać', 'Pomóż mi usiąść', 'Pomóż mi się obrócić',
+    'Podaj mi wodę', 'Podaj mi telefon',
+    'Proszę mówić wolniej', 'Proszę powtórzyć',
+    'Proszę o cierpliwość', 'Nie rozumiem'
   ],
   'Rozmowa': [
+    // Najczęstsze - emocje i kontakt z bliskimi
     'Kocham cię', 'Dziękuję że jesteś', 'Cieszę się że przyszłaś',
-    'Cieszę się że przyszedłeś', 'Miło cię widzieć', 'Brakuje mi was',
-    'Tęsknię za domem', 'Tęsknię za tobą', 'Myślę o was',
+    'Cieszę się że przyszedłeś', 'Miło cię widzieć',
     'Jak tam u was?', 'Co słychać?', 'Co nowego?',
     'Jak dzieci?', 'Jak w domu?', 'Jak idzie budowa domu?',
-    'Opowiedz mi coś', 'Opowiedz co się działo', 'Poczytaj mi',
-    'Pokaż mi zdjęcia', 'Martwię się o was', 'Nie martwcie się o mnie',
-    'Dam radę', 'Będzie dobrze', 'Wierzę że wyzdrowieje',
-    'Chcę wrócić do domu', 'Nie mogę się doczekać',
-    'Przynieś mi coś z domu', 'Przyjdź jutro', 'Zostań jeszcze chwilę',
-    'Przepraszam za kłopot', 'Jestem wdzięczna', 'Mam nadzieję'
+    'Opowiedz mi coś', 'Opowiedz co się działo',
+    // Pozytywne i budujące
+    'Będzie dobrze', 'Dam radę', 'Wierzę że wyzdrowieję',
+    'Nie mogę się doczekać powrotu do domu', 'Mam nadzieję',
+    'Jestem wdzięczna', 'Nie martwcie się o mnie',
+    // Tęsknota i bliskość
+    'Tęsknię za domem', 'Tęsknię za tobą', 'Myślę o was',
+    'Brakuje mi was', 'Zostań jeszcze chwilę',
+    // Prośby
+    'Pokaż mi zdjęcia', 'Poczytaj mi', 'Przynieś mi coś z domu',
+    'Przyjdź jutro', 'Martwię się o was',
+    'Przepraszam za kłopot', 'Dziękuję za wszystko'
   ],
   'Samopoczucie': [
-    'Czuję się lepiej', 'Czuję się dobrze', 'Jest mi lżej', 'Lepiej mi',
+    // Pozytywne na pierwszym miejscu
+    'Czuję się lepiej', 'Lepiej mi', 'Jest mi lżej',
     'Czuję się coraz lepiej', 'Mam więcej siły', 'Wracam do siebie',
     'Dzisiaj lepszy dzień', 'Dobrze spałam', 'Wyspałam się',
-    'Czuję się źle', 'Gorzej mi', 'Tak samo', 'Bez zmian',
-    'Jestem zmęczona', 'Jestem słaba', 'Jestem senna', 'Nie mogę spać',
-    'Źle spałam', 'Mdli mnie', 'Kręci mi się w głowie',
-    'Mam dreszcze', 'Mam gorączkę', 'Trudno mi oddychać',
-    'Duszę się', 'Mam nudności', 'Chce mi się wymiotować',
-    'Nie mam apetytu', 'Czuję się spokojniejsza',
-    'Mam nadzieję że będzie lepiej', 'Daje radę', 'Trzymam się'
+    'Czuję się spokojniejsza', 'Daje radę', 'Trzymam się',
+    'Mam nadzieję że będzie lepiej',
+    // Stan obecny - neutralne
+    'Tak samo', 'Bez zmian', 'Czuję się dobrze',
+    // Negatywne - ale realne przy trzustce
+    'Czuję się źle', 'Gorzej mi', 'Jestem zmęczona', 'Jestem słaba',
+    'Jestem senna', 'Nie mogę spać', 'Źle spałam',
+    'Mdli mnie', 'Mam nudności', 'Chce mi się wymiotować',
+    'Kręci mi się w głowie', 'Mam dreszcze', 'Mam gorączkę',
+    'Trudno mi oddychać', 'Duszę się',
+    'Nie mam apetytu', 'Boję się'
   ]
 };
 
