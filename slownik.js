@@ -5,11 +5,66 @@
 
 // --- Quick Phrases (hospital scenarios) ---
 const PHRASES = {
-  'Potrzeby': ['Chcę pić', 'Chcę jeść', 'Zimno mi', 'Gorąco mi', 'Chcę spać'],
-  'Ból': ['Boli mnie głowa', 'Boli mnie brzuch', 'Boli mnie ręka', 'Coś mnie boli'],
-  'Pomoc': ['Zawołaj pielęgniarkę', 'Proszę podnieść łóżko', 'Proszę położyć łóżko', 'Potrzebuję pomocy'],
-  'Rozmowa': ['Jak tam u ciebie?', 'Co słychać?', 'Dziękuję', 'Kocham cię', 'Tak', 'Nie'],
-  'Samopoczucie': ['Czuję się dobrze', 'Czuję się źle', 'Lepiej mi', 'Gorzej mi']
+  'Potrzeby': [
+    'Chcę pić', 'Chcę jeść', 'Chcę spać', 'Zimno mi', 'Gorąco mi',
+    'Chcę do toalety', 'Chcę się umyć', 'Chcę się przebrać',
+    'Chcę dodatkową poduszkę', 'Chcę koc', 'Zdejmij koc',
+    'Chcę herbatę', 'Chcę kawę', 'Chcę wodę', 'Chcę sok',
+    'Jestem głodny', 'Jestem głodna', 'Jestem spragniony', 'Jestem spragniona',
+    'Chcę okulary', 'Chcę telefon', 'Chcę pilota do telewizora',
+    'Otwórz okno', 'Zamknij okno', 'Zapal światło', 'Zgaś światło',
+    'Podaj mi chusteczki', 'Chcę się położyć', 'Chcę usiąść',
+    'Pomóż mi wstać'
+  ],
+  'Ból': [
+    'Boli mnie głowa', 'Boli mnie brzuch', 'Boli mnie ręka', 'Boli mnie noga',
+    'Boli mnie plecy', 'Boli mnie klatka piersiowa', 'Boli mnie gardło',
+    'Boli mnie serce', 'Boli mnie oko', 'Boli mnie ucho',
+    'Boli mnie ząb', 'Boli mnie szyja', 'Boli mnie kolano',
+    'Boli mnie stopa', 'Boli mnie bark', 'Boli mnie łokieć',
+    'Coś mnie boli', 'Boli bardzo mocno', 'Boli trochę', 'Boli coraz bardziej',
+    'Boli mniej niż wczoraj', 'Ból nie ustępuje', 'Ból jest ostry',
+    'Ból jest tępy', 'Ból promieniuje', 'Boli przy oddychaniu',
+    'Boli przy ruszaniu', 'Boli cały czas', 'Boli od rana',
+    'Potrzebuję leku na ból'
+  ],
+  'Pomoc': [
+    'Zawołaj pielęgniarkę', 'Zawołaj lekarza', 'Zawołaj rodzinę',
+    'Proszę podnieść łóżko', 'Proszę położyć łóżko', 'Proszę opuścić łóżko',
+    'Potrzebuję pomocy', 'Pomóż mi się obrócić', 'Pomóż mi wstać',
+    'Pomóż mi usiąść', 'Podaj mi wodę', 'Podaj mi telefon',
+    'Zadzwoń do rodziny', 'Zadzwoń do męża', 'Zadzwoń do żony',
+    'Zadzwoń do syna', 'Zadzwoń do córki', 'Zadzwoń do mamy',
+    'Potrzebuję basenu', 'Potrzebuję kaczki',
+    'Kiedy będzie lekarz?', 'Kiedy będzie obiad?', 'Kiedy badanie?',
+    'Kiedy mogę iść do domu?', 'Kiedy następna tabletka?',
+    'Kiedy następny zastrzyk?', 'Kiedy następna kroplówka?',
+    'Czy mogę dostać tabletkę?', 'Czy mogę dostać coś na ból?',
+    'Proszę poprawić poduszkę'
+  ],
+  'Rozmowa': [
+    'Tak', 'Nie', 'Nie wiem', 'Może', 'Dobrze', 'Rozumiem',
+    'Dziękuję', 'Przepraszam', 'Proszę', 'Kocham cię',
+    'Jak tam u ciebie?', 'Co słychać?', 'Co nowego?',
+    'Tęsknię za tobą', 'Tęsknię za domem', 'Martwię się',
+    'Jak dzieci?', 'Jak w domu?', 'Jak w pracy?',
+    'Kto dzwonił?', 'Kto przychodził?', 'Kiedy przyjdziesz?',
+    'Przyjdź jutro', 'Przyjdź rano', 'Przyjdź wieczorem',
+    'Przynieś mi...', 'Opowiedz coś', 'Poczytaj mi',
+    'Włącz telewizor', 'Wyłącz telewizor',
+    'Jest mi smutno', 'Cieszę się że jesteś'
+  ],
+  'Samopoczucie': [
+    'Czuję się dobrze', 'Czuję się źle', 'Czuję się lepiej', 'Czuję się gorzej',
+    'Lepiej mi', 'Gorzej mi', 'Tak samo', 'Bez zmian',
+    'Jestem zmęczony', 'Jestem zmęczona', 'Jestem słaby', 'Jestem słaba',
+    'Jestem senny', 'Jestem senna', 'Nie mogę spać', 'Źle spałem',
+    'Mdli mnie', 'Kręci mi się w głowie', 'Mam dreszcze', 'Mam gorączkę',
+    'Trudno mi oddychać', 'Duszę się', 'Mam kaszel', 'Boli mnie przy kaszlu',
+    'Mam nudności', 'Chce mi się wymiotować', 'Swędzi mnie', 'Mam wysypkę',
+    'Czuję się samotny', 'Czuję się samotna',
+    'Boję się', 'Jest mi lżej'
+  ]
 };
 
 // --- Sentence starters ---

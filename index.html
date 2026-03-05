@@ -193,6 +193,14 @@
       grid-auto-rows: 1fr;
     }
 
+    .btn-grid.phrases-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .btn-grid.phrases-grid .btn {
+      min-height: 80px;
+    }
+
     .btn-grid.words-grid .btn {
       min-height: 120px;
     }
@@ -916,12 +924,8 @@ function renderPhrases() {
   var activeCat = categories[state.activeCategory] || categories[0];
   var phrases = PHRASES[activeCat] || [];
 
-  // Make content area flex column so grid can fill remaining height
-  contentEl.style.display = 'flex';
-  contentEl.style.flexDirection = 'column';
-
   var grid = document.createElement('div');
-  grid.className = 'btn-grid fill-height';
+  grid.className = 'btn-grid phrases-grid';
   phrases.forEach(function(phrase) {
     var btn = document.createElement('button');
     btn.className = 'btn btn-primary';
