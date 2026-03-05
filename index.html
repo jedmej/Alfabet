@@ -188,6 +188,11 @@
       gap: 8px;
     }
 
+    .btn-grid.fill-height {
+      flex: 1;
+      grid-auto-rows: 1fr;
+    }
+
     .alpha-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -860,6 +865,8 @@ function renderTabs() {
 function renderContent() {
   contentEl.textContent = '';
   contentEl.scrollTop = 0;
+  contentEl.style.display = '';
+  contentEl.style.flexDirection = '';
 
   switch (state.mode) {
     case 'phrases':
@@ -900,8 +907,12 @@ function renderPhrases() {
   var activeCat = categories[state.activeCategory] || categories[0];
   var phrases = PHRASES[activeCat] || [];
 
+  // Make content area flex column so grid can fill remaining height
+  contentEl.style.display = 'flex';
+  contentEl.style.flexDirection = 'column';
+
   var grid = document.createElement('div');
-  grid.className = 'btn-grid';
+  grid.className = 'btn-grid fill-height';
   phrases.forEach(function(phrase) {
     var btn = document.createElement('button');
     btn.className = 'btn btn-primary';
