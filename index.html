@@ -814,8 +814,8 @@ function renderWords() {
     contentEl.appendChild(starterLabel);
   }
 
-  // Show starters or full list
-  var words = suggestions ? STARTERS : STARTERS;
+  // Always show starters below
+  var words = STARTERS;
   var starterGrid = document.createElement('div');
   starterGrid.className = 'btn-grid';
   words.forEach(function(w) {
