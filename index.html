@@ -36,6 +36,7 @@
       min-height: 15vh;
       background: #fff;
       border-bottom: 2px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       display: flex;
       align-items: center;
       padding: 8px;
@@ -73,6 +74,11 @@
       transition: background 0.15s;
     }
 
+    .word-tile:active {
+      background: #d4c8e4;
+      transform: scale(0.97);
+    }
+
     .word-tile.selected {
       background: #7c3aed;
       color: #fff;
@@ -86,8 +92,8 @@
     }
 
     .sentence-actions button {
-      min-height: 48px;
-      min-width: 48px;
+      min-height: 60px;
+      min-width: 60px;
       border: none;
       border-radius: 12px;
       font-size: 16px;
@@ -106,14 +112,29 @@
       color: #78350f;
     }
 
+    .btn-undo:active {
+      background: #f59e0b;
+      transform: scale(0.97);
+    }
+
     .btn-clear {
       background: #ef4444;
       color: #fff;
     }
 
+    .btn-clear:active {
+      background: #dc2626;
+      transform: scale(0.97);
+    }
+
     .btn-speak {
       background: #2563eb;
       color: #fff;
+    }
+
+    .sentence-actions button.disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
 
     /* --- Content Area --- */
@@ -174,7 +195,7 @@
     }
 
     .alpha-grid .btn {
-      min-height: 54px;
+      min-height: 60px;
       font-size: 20px;
       font-weight: 600;
       padding: 4px;
@@ -192,9 +213,9 @@
 
     .category-pill {
       flex-shrink: 0;
-      min-height: 44px;
+      min-height: 60px;
       padding: 8px 20px;
-      border-radius: 22px;
+      border-radius: 30px;
       border: 2px solid #d1d5db;
       background: #fff;
       font-size: 16px;
@@ -205,10 +226,19 @@
       white-space: nowrap;
     }
 
+    .category-pill:active {
+      background: #e5e7eb;
+      transform: scale(0.97);
+    }
+
     .category-pill.active {
       background: #2563eb;
       color: #fff;
       border-color: #1d4ed8;
+    }
+
+    .category-pill.active:active {
+      background: #1d4ed8;
     }
 
     /* --- Alphabet Input Display --- */
@@ -252,8 +282,8 @@
     }
 
     .alpha-actions .btn {
-      min-height: 54px;
-      min-width: 54px;
+      min-height: 60px;
+      min-width: 60px;
       font-size: 20px;
     }
 
@@ -276,7 +306,7 @@
     }
 
     .diacritics-toggle .btn {
-      min-height: 44px;
+      min-height: 60px;
       font-size: 14px;
       padding: 4px 14px;
     }
@@ -314,7 +344,7 @@
     }
 
     .tab-icon {
-      font-size: 24px;
+      font-size: 28px;
       line-height: 1;
     }
 
@@ -369,8 +399,8 @@
     }
 
     .sheet-close {
-      min-height: 44px;
-      min-width: 44px;
+      min-height: 48px;
+      min-width: 48px;
       border: none;
       background: #f3f4f6;
       border-radius: 50%;
@@ -381,6 +411,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .sheet-close:active {
+      background: #d1d5db;
+      transform: scale(0.95);
     }
 
     .sheet-section-label {
@@ -506,6 +541,38 @@
       font-weight: 600;
       padding: 4px 0;
     }
+
+    .tab:active {
+      background: #f3f4f6;
+    }
+
+    .btn-settings:active {
+      background: #d1d5db;
+      transform: scale(0.97);
+    }
+
+    .btn-secondary:active {
+      background: #d1d5db;
+      transform: scale(0.97);
+    }
+
+    .no-results {
+      font-size: 16px;
+      color: #999;
+      font-style: italic;
+      padding: 12px 0;
+    }
+
+    /* --- Responsive: Tablet / Foldable (>600px) --- */
+    @media (min-width: 601px) {
+      .btn-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .alpha-grid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -588,36 +655,34 @@ function renderSentence() {
     });
   }
 
-  // Undo button
-  if (state.sentence.length > 0) {
-    const undoBtn = document.createElement('button');
-    undoBtn.className = 'btn-undo';
-    undoBtn.textContent = 'Cofnij';
-    undoBtn.addEventListener('click', function() {
-      state.sentence.pop();
-      state.selectedWordIdx = null;
-      renderSentence();
-      renderContent();
-    });
-    sentenceActionsEl.appendChild(undoBtn);
-  }
+  // Undo button (always visible, dimmed when empty)
+  const undoBtn = document.createElement('button');
+  undoBtn.className = 'btn-undo';
+  if (state.sentence.length === 0) undoBtn.classList.add('disabled');
+  undoBtn.textContent = 'Cofnij';
+  undoBtn.addEventListener('click', function() {
+    state.sentence.pop();
+    state.selectedWordIdx = null;
+    renderSentence();
+    renderContent();
+  });
+  sentenceActionsEl.appendChild(undoBtn);
 
-  // Clear button
-  if (state.sentence.length > 0) {
-    const clearBtn = document.createElement('button');
-    clearBtn.className = 'btn-clear';
-    clearBtn.textContent = 'Wyczyść';
-    clearBtn.addEventListener('click', function() {
-      if (state.sentence.length > 1) {
-        if (!confirm('Wyczyścić całe zdanie?')) return;
-      }
-      state.sentence = [];
-      state.selectedWordIdx = null;
-      renderSentence();
-      renderContent();
-    });
-    sentenceActionsEl.appendChild(clearBtn);
-  }
+  // Clear button (always visible, dimmed when empty)
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'btn-clear';
+  if (state.sentence.length === 0) clearBtn.classList.add('disabled');
+  clearBtn.textContent = 'Wyczyść';
+  clearBtn.addEventListener('click', function() {
+    if (state.sentence.length > 1) {
+      if (!confirm('Wyczyścić całe zdanie?')) return;
+    }
+    state.sentence = [];
+    state.selectedWordIdx = null;
+    renderSentence();
+    renderContent();
+  });
+  sentenceActionsEl.appendChild(clearBtn);
 
   // Settings button (always visible)
   var settingsBtn = document.createElement('button');
@@ -720,7 +785,11 @@ function closeWordEdit() {
 // =============================================
 // Add Word
 // =============================================
+var _lastAddTime = 0;
 function addWord(word) {
+  var now = Date.now();
+  if (now - _lastAddTime < 300) return; // debounce rapid double-tap
+  _lastAddTime = now;
   if (state.editingWordIdx !== null) {
     state.sentence[state.editingWordIdx] = word;
     state.editingWordIdx = null;
@@ -1100,11 +1169,11 @@ function renderAlphabet() {
       return w.startsWith(state.alphaBuffer.toLowerCase());
     });
 
-    if (filtered.length > 0) {
-      var spacer = document.createElement('div');
-      spacer.className = 'spacer';
-      contentEl.appendChild(spacer);
+    var spacer = document.createElement('div');
+    spacer.className = 'spacer';
+    contentEl.appendChild(spacer);
 
+    if (filtered.length > 0) {
       var sugLabel = document.createElement('div');
       sugLabel.className = 'alpha-suggestions-label';
       sugLabel.textContent = 'Pasujące słowa:';
@@ -1122,6 +1191,11 @@ function renderAlphabet() {
         sugGrid.appendChild(btn);
       });
       contentEl.appendChild(sugGrid);
+    } else {
+      var noResults = document.createElement('div');
+      noResults.className = 'no-results';
+      noResults.textContent = 'Brak wyników';
+      contentEl.appendChild(noResults);
     }
   }
 }
