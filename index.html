@@ -1313,23 +1313,23 @@ async function getAIPredictions(sentenceWords) {
   var controller = new AbortController();
   var timeout = setTimeout(function() { controller.abort(); }, 2000);
 
+  var prompt = 'Jesteś asystentem osoby w szpitalu, która nie może mówić i komunikuje się wybierając słowa. Osoba buduje zdanie po polsku i wybrała już: "' + sentence + '"\n\nPodaj 9 najbardziej prawdopodobnych następnych słów po polsku. Odpowiedz TYLKO listą słów oddzielonych przecinkami, bez żadnych dodatkowych wyjaśnień. Słowa powinny naturalnie kontynuować zdanie.';
+
   try {
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(apiKey);
+    var response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'Content-Type': 'application/json'
       },
       signal: controller.signal,
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
-        messages: [{
-          role: 'user',
-          content: 'Jeste\u015b asystentem osoby w szpitalu, kt\u00f3ra nie mo\u017ce m\u00f3wi\u0107 i komunikuje si\u0119 wybieraj\u0105c s\u0142owa. Osoba buduje zdanie po polsku i wybra\u0142a ju\u017c: "' + sentence + '"\n\nPodaj 9 najbardziej prawdopodobnych nast\u0119pnych s\u0142\u00f3w po polsku. Odpowiedz TYLKO list\u0105 s\u0142\u00f3w oddzielonych przecinkami, bez \u017cadnych dodatkowych wyja\u015bnie\u0144. S\u0142owa powinny naturalnie kontynuowa\u0107 zdanie.'
-        }]
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          maxOutputTokens: 100
+        }
       })
     });
 
@@ -1338,7 +1338,7 @@ async function getAIPredictions(sentenceWords) {
     if (!response.ok) return null;
 
     var data = await response.json();
-    var text = data.content[0].text;
+    var text = data.candidates[0].content.parts[0].text;
     return text.split(',').map(function(w) { return w.trim(); }).filter(function(w) { return w.length > 0; }).slice(0, 9);
   } catch (e) {
     clearTimeout(timeout);
