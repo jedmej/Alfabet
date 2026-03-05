@@ -219,8 +219,6 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      flex: 1;
-      grid-auto-rows: 1fr;
     }
 
     .alpha-grid .btn {
@@ -318,9 +316,6 @@
 
     .alpha-suggestions {
       margin-top: 10px;
-      max-height: 10vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
     }
 
     .alpha-suggestions .btn {
@@ -1144,8 +1139,6 @@ function renderWords() {
 // Render: Alphabet Mode
 // =============================================
 function renderAlphabet() {
-  contentEl.style.display = 'flex';
-  contentEl.style.flexDirection = 'column';
 
   // Input display row
   var inputRow = document.createElement('div');
