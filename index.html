@@ -447,24 +447,11 @@
   <!-- Tab Navigation -->
   <div class="tab-bar" id="tabBar"></div>
 
+<script src="slownik.js"></script>
 <script>
 // =============================================
-// Data — loaded from slownik.js (placeholders)
+// Data — loaded from slownik.js
 // =============================================
-const PHRASES = {
-  'Potrzeby': ['Chce pić', 'Chce jeść', 'Zimno mi'],
-  'Ból': ['Boli mnie głowa', 'Coś mnie boli'],
-  'Pomoc': ['Zawołaj pielegniarkę'],
-  'Rozmowa': ['Tak', 'Nie', 'Dziękuję'],
-  'Samopoczucie': ['Czuję się dobrze', 'Czuję się źle']
-};
-const DICTIONARY = ['boli', 'chcę', 'cześć', 'dobrze', 'dziękuję', 'głowa', 'jak', 'jest', 'już', 'mnie', 'nie', 'pić', 'proszę', 'się', 'tak', 'tam', 'teraz', 'tutaj', 'źle'];
-const BIGRAMS = {
-  'jak': ['tam', 'się', 'długo', 'jest'],
-  'chcę': ['pić', 'jeść', 'spać'],
-  'boli': ['mnie', 'głowa', 'brzuch']
-};
-const STARTERS = ['Ja', 'Czy', 'Jak', 'Chcę', 'Proszę', 'Nie', 'Gdzie', 'Kiedy', 'Co'];
 
 const POLISH_DIACRITICS = ['Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'];
 const ALPHABET = 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ'.split('');
