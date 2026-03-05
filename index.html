@@ -318,6 +318,14 @@
 
     .alpha-suggestions {
       margin-top: 10px;
+      max-height: 10vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .alpha-suggestions .btn {
+      font-size: 28px;
+      border-radius: 0;
     }
 
     .alpha-suggestions-label {
@@ -1224,10 +1232,8 @@ function renderAlphabet() {
     contentEl.appendChild(spacer);
 
     if (filtered.length > 0) {
-      var sugLabel = document.createElement('div');
-      sugLabel.className = 'alpha-suggestions-label';
-      sugLabel.textContent = 'Pasujące słowa:';
-      contentEl.appendChild(sugLabel);
+      var sugContainer = document.createElement('div');
+      sugContainer.className = 'alpha-suggestions';
 
       var sugGrid = document.createElement('div');
       sugGrid.className = 'btn-grid';
@@ -1240,7 +1246,8 @@ function renderAlphabet() {
         });
         sugGrid.appendChild(btn);
       });
-      contentEl.appendChild(sugGrid);
+      sugContainer.appendChild(sugGrid);
+      contentEl.appendChild(sugContainer);
     } else {
       var noResults = document.createElement('div');
       noResults.className = 'no-results';
