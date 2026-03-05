@@ -16,7 +16,11 @@ const PHRASES = {
 const STARTERS = [
   'Ja', 'Czy', 'Jak', 'Chcę', 'Proszę', 'Nie', 'Gdzie', 'Kiedy',
   'Co', 'To', 'Mam', 'Jestem', 'Mogę', 'Kto', 'Dlaczego', 'Ile',
-  'Tak', 'Bardzo', 'Dziękuję'
+  'Tak', 'Bardzo', 'Dziękuję', 'Przepraszam', 'Boli', 'Potrzebuję',
+  'Chciałabym', 'Możesz', 'Czy mogę', 'Pomóż', 'Daj', 'Podaj',
+  'Zadzwoń', 'Powiedz', 'Chodź', 'Poczekaj', 'Wiem', 'Nie wiem',
+  'Dobrze', 'Źle', 'Już', 'Jeszcze', 'Teraz', 'Później',
+  'Tutaj', 'Tam', 'Mój', 'Moja', 'On', 'Ona', 'My'
 ];
 
 // --- Dictionary (~1000 common Polish words, sorted alphabetically with Polish locale) ---
