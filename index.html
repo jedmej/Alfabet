@@ -969,6 +969,17 @@ function renderPhrases() {
 // Render: Words Mode
 // =============================================
 function renderWords() {
+  // "Type with letters" button at the top
+  var typeBtn = document.createElement('button');
+  typeBtn.className = 'btn btn-secondary';
+  typeBtn.style.width = '100%';
+  typeBtn.style.marginBottom = '10px';
+  typeBtn.textContent = 'Wpisz literkami';
+  typeBtn.addEventListener('click', function() {
+    switchMode('alphabet');
+  });
+  contentEl.appendChild(typeBtn);
+
   var lastWord = state.sentence.length > 0
     ? state.sentence[state.sentence.length - 1].toLowerCase()
     : null;
@@ -1114,19 +1125,6 @@ function renderWords() {
   });
   contentEl.appendChild(starterGrid);
 
-  // "Type with letters" button
-  var spacer2 = document.createElement('div');
-  spacer2.className = 'spacer';
-  contentEl.appendChild(spacer2);
-
-  var typeBtn = document.createElement('button');
-  typeBtn.className = 'btn btn-secondary';
-  typeBtn.style.width = '100%';
-  typeBtn.textContent = 'Wpisz literkami';
-  typeBtn.addEventListener('click', function() {
-    switchMode('alphabet');
-  });
-  contentEl.appendChild(typeBtn);
 }
 
 // =============================================
