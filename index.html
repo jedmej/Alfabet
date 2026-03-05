@@ -1147,6 +1147,7 @@ function renderAlphabet() {
 
   var display = document.createElement('div');
   display.className = 'alpha-input-display';
+  display.style.width = '100%';
   var textSpan = document.createElement('span');
   textSpan.textContent = state.alphaBuffer;
   display.appendChild(textSpan);
@@ -1154,23 +1155,27 @@ function renderAlphabet() {
   cursor.className = 'cursor';
   display.appendChild(cursor);
   inputRow.appendChild(display);
+  contentEl.appendChild(inputRow);
 
-  var actionsDiv = document.createElement('div');
-  actionsDiv.className = 'alpha-actions';
+  // Action buttons row - same style as letter grid
+  var actionsGrid = document.createElement('div');
+  actionsGrid.className = 'alpha-grid';
+  actionsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+  actionsGrid.style.marginBottom = '12px';
 
   // Backspace
   var bksp = document.createElement('button');
   bksp.className = 'btn';
-  bksp.textContent = '\u232B';
+  bksp.textContent = '\u232B Usuń';
   bksp.addEventListener('click', function() {
     if (state.alphaBuffer.length > 0) {
       state.alphaBuffer = state.alphaBuffer.slice(0, -1);
       renderContent();
     }
   });
-  actionsDiv.appendChild(bksp);
+  actionsGrid.appendChild(bksp);
 
-  // Add word / space
+  // Add word
   var addBtn = document.createElement('button');
   addBtn.className = 'btn btn-primary';
   addBtn.textContent = 'Dodaj';
@@ -1179,10 +1184,9 @@ function renderAlphabet() {
       addWord(state.alphaBuffer.trim().toLowerCase());
     }
   });
-  actionsDiv.appendChild(addBtn);
+  actionsGrid.appendChild(addBtn);
 
-  inputRow.appendChild(actionsDiv);
-  contentEl.appendChild(inputRow);
+  contentEl.appendChild(actionsGrid);
 
   // Check if suggestions will be shown
   var hasSuggestions = state.alphaBuffer.length > 0 &&
