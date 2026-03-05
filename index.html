@@ -208,17 +208,16 @@
     /* --- Category Pills --- */
     .category-bar {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
-      overflow-x: auto;
       padding-bottom: 10px;
       flex-shrink: 0;
-      -webkit-overflow-scrolling: touch;
     }
 
     .category-pill {
-      flex-shrink: 0;
+      flex: 1 1 auto;
       min-height: 60px;
-      padding: 8px 20px;
+      padding: 8px 12px;
       border-radius: 30px;
       border: 2px solid #d1d5db;
       background: #fff;
@@ -227,7 +226,7 @@
       cursor: pointer;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
+      text-align: center;
     }
 
     .category-pill:active {
