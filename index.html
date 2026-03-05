@@ -1140,29 +1140,11 @@ function renderAlphabet() {
   inputRow.appendChild(actionsDiv);
   contentEl.appendChild(inputRow);
 
-  // Diacritics toggle
-  var diacToggle = document.createElement('div');
-  diacToggle.className = 'diacritics-toggle';
-  var toggleBtn = document.createElement('button');
-  toggleBtn.className = 'btn' + (state.showDiacritics ? ' btn-primary' : ' btn-secondary');
-  toggleBtn.textContent = state.showDiacritics ? 'ABC' : 'ĄĆĘŁŃ';
-  toggleBtn.addEventListener('click', function() {
-    state.showDiacritics = !state.showDiacritics;
-    renderContent();
-  });
-  diacToggle.appendChild(toggleBtn);
-  contentEl.appendChild(diacToggle);
-
   // Letter grid
   var grid = document.createElement('div');
   grid.className = 'alpha-grid';
 
-  var letters;
-  if (state.showDiacritics) {
-    letters = POLISH_DIACRITICS;
-  } else {
-    letters = 'ABCDEFGHIJKLMNOPRSTUWYZ'.split('');
-  }
+  var letters = 'ABCDEFGHIJKLMNOPRSTUWYZĄĆĘŁŃÓŚŹŻ'.split('');
 
   letters.forEach(function(letter) {
     var btn = document.createElement('button');
