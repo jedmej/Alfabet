@@ -194,13 +194,14 @@
 
     .alpha-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 6px;
+      flex: 1;
+      grid-auto-rows: 1fr;
     }
 
     .alpha-grid .btn {
-      min-height: 60px;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 600;
       padding: 4px;
     }
@@ -573,7 +574,7 @@
       }
 
       .alpha-grid {
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(4, 1fr);
       }
     }
   </style>
@@ -1093,6 +1094,9 @@ function renderWords() {
 // Render: Alphabet Mode
 // =============================================
 function renderAlphabet() {
+  contentEl.style.display = 'flex';
+  contentEl.style.flexDirection = 'column';
+
   // Input display row
   var inputRow = document.createElement('div');
   inputRow.className = 'alpha-input-row';
